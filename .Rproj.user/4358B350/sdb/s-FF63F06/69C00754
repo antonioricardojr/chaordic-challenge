@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(readr)\nlibrary(dplyr)\nlibrary(ggplot2)\ndata_products_purchase <- read_delim(\"~/Documentos/workspace/chaordic-challenge/data/data_products.csv\", \n                                     \";\", escape_double = FALSE, trim_ws = TRUE)\ncatalog <- read_csv(\"~/Documentos/workspace/chaordic-challenge/data/catalog\")\n\n\ndata_products_purchase$is_purchase <- TRUE\nsummary(data_products_purchase)\nsummary(catalog)\n\n\ndata_products_purchase <- left_join(data_products_purchase, catalog, by=\"pid\")\nsummary(data_products_purchase)\n\nlevels(as.factor(data_products_purchase$category))\nlevels(as.factor(data_products_purchase$sub_category))\nlevels(as.factor(data_products_purchase$sub_sub_category))\n\n\ndata_products_purchase %>% ggplot(aes(x=category, fill=gender)) + geom_histogram(stat = \"count\") + coord_flip() +ggtitle(\"Category\")\ndata_products_purchase %>% ggplot(aes(x=sub_category, fill=gender)) + geom_histogram(stat = \"count\") + coord_flip() + ggtitle(\"Subcategory\")\ndata_products_purchase %>% ggplot(aes(x=sub_sub_category, fill=gender)) + geom_histogram(stat = \"count\") + coord_flip() + ggtitle(\"SubSubcategory\")\n\n\ncategories <- levels(as.factor(data_products_purchase$category))\n\nfor(category in categories){\n  data_products_purchase[category] <- ifelse(data_products_purchase$category == category, TRUE, FALSE)\n  #data_products_purchase[category] <- as.factor(data_products_purchase[category])\n}\n\nsubcategories <- levels(as.factor(data_products_purchase$sub_category))\n\nfor(sub_category in subcategories){\n  data_products_purchase[sub_category] <- ifelse(data_products_purchase$sub_category == sub_category, TRUE, FALSE)\n  #data_products_purchase[sub_category] <- as.factor(data_products_purchase[sub_category])\n}\n\n\nsubsubcategories <- levels(as.factor(data_products_purchase$sub_sub_category))\n\nfor(sub_sub_category in subsubcategories){\n  data_products_purchase[sub_sub_category] <- ifelse(data_products_purchase$sub_sub_category == sub_sub_category, TRUE, FALSE)\n  #data_products_purchase[sub_sub_category] <- as.factor(data_products_purchase[sub_sub_category])\n}\n\n\ndata_products_purchase$promocao <- ifelse(data_products_purchase$current_price < data_products_purchase$original_price, TRUE, FALSE)\nsummary(data_products_purchase$promocao)\n\n\ndata_products_purchase$id <- paste0(data_products_purchase$uid, data_products_purchase$pid, data_products_purchase$date)\n\n\n\n\ndf <- data_products_purchase[,6:length(data_products_purchase)] \ndf$quantity <- data_products_purchase$quantity\nsummary(df)\nglimpse(df)\n\n\ndf_factors <- df %>% select(-id, -quantity, -gender, -current_price, -original_price, -category, -sub_category, -sub_sub_category)\ndf_factors$promocao <- ifelse(is.na(df_factors$promocao), FALSE, df_factors$promocao)\ndf_factors$gender <- df$gender\nglimpse(df_factors)\n\n\ndf_factors[] <- lapply(df_factors, factor)\nglimpse(df_factors)\n\ndf_not_factors <- df %>% select(id, quantity, current_price, original_price)\nsummary(df_not_factors)\n\ndf_not_factors$current_price <- ifelse(is.na(df_not_factors$current_price), 0, df_not_factors$current_price)\ndf_not_factors$original_price <- ifelse(is.na(df_not_factors$original_price), 0, df_not_factors$original_price)\ndf_not_factors$price_discount <- df_not_factors$current_price - df_not_factors$original_price\n\ndf_purchase <- cbind(df_not_factors, df_factors)\n\nglimpse(df_purchase)\n\ndf_purchase <- droplevels(df_purchase)\nsummary(df_purchase)\n\nwrite.csv(df_purchase, \"df_purchase.csv\", row.names = FALSE)\n\n\n",
+    "created" : 1497030812078.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1175283612",
+    "id" : "69C00754",
+    "lastKnownWriteTime" : 1497027806,
+    "last_content_update" : 1497027806,
+    "path" : "~/Documentos/workspace/chaordic-challenge/data_preprocessing.R",
+    "project_path" : "data_preprocessing.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

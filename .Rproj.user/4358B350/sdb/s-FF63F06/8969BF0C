@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(readr)\nlibrary(dplyr)\nlibrary(caret)\n\n\ndf_purchase <- read_csv(\"~/Documentos/workspace/chaordic-challenge/df_purchase.csv\")\n\ndf_purchase <- df_purchase[complete.cases(df_purchase$gender), ] \n\nglimpse(df_purchase)\nsummary(df_purchase)\n\ndf_purchase <- droplevels(df_purchase)\n\ntrainIndex <- createDataPartition(df_purchase$gender, p = .75, list = FALSE, times = 1)\n\ndfTrain <- df_purchase[trainIndex,]\ndfTest <- df_purchase[-trainIndex,]\n\nfitControl <- trainControl(## 10-fold CV\n  method = \"cv\",\n  number = 10)\n\n\ntable(df_purchase$gender)\n\n\nptm <- proc.time()\n\ntreeFit <- train(gender ~ ., data = select(dfTrain, -id),\n                 method = \"C5.0\",\n                 trControl = fitControl,\n                 tuneGrid=expand.grid(model = \"tree\", winnow = FALSE, trials = c(1:10)))\n\nrand_forest_time <- proc.time() - ptm\n\ntreeFit\n\n\ntreePredict <- predict(treeFit,newdata = dfTest)\nconfusionMatrix(treePredict, dfTest$gender)\n\n\n\n\n",
+    "created" : 1497016856399.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "469877245",
+    "id" : "8969BF0C",
+    "lastKnownWriteTime" : 1497030609,
+    "last_content_update" : 1497030609592,
+    "path" : "~/Documentos/workspace/chaordic-challenge/model_purchase.R",
+    "project_path" : "model_purchase.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
